@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Checkout - Italian Mobile Shop</title>
+  <style>
+    body {
+      background-color: #0d1117;
+      color: #f0f0f0;
+      font-family: 'Segoe UI', sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      border-radius: 10px;
+      background: #1f2937;
+      box-sizing: border-box;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 2rem;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-size: 1rem;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: none;
+      font-size: 1rem;
+      background-color: #262f3d;
+      color: #eee;
+      box-sizing: border-box;
+      resize: vertical;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 15px;
+      background-color: #10b981;
+      color: white;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #059669;
+    }
+    #payment-instructions {
+      margin-top: 15px;
+      font-size: 1rem;
+      color: #facc15; /* yellow */
+      min-height: 50px;
+    }
+    #success-container {
+      margin-top: 30px;
+      text-align: center;
+      display: none;
+      color: #10b981;
+    }
+    /* Tick animation style */
+    .tick {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: inline-block;
+      border: 4px solid #10b981;
+      position: relative;
+      animation: scaleIn 0.5s ease forwards;
+      margin-bottom: 10px;
+    }
+    .tick::after {
+      content: "";
+      position: absolute;
+      left: 15px;
+      top: 6px;
+      width: 12px;
+      height: 24px;
+      border-right: 4px solid #10b981;
+      border-bottom: 4px solid #10b981;
+      transform: rotate(45deg);
+      transform-origin: bottom left;
+      animation: drawTick 0.3s ease forwards;
+      animation-delay: 0.5s;
+      opacity: 0;
+    }
+
+    @keyframes scaleIn {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes drawTick {
+      0% { width: 0; height: 0; opacity: 0; }
+      100% { width: 12px; height: 24px; opacity: 1; }
+    }
+
+    /* Responsive styles */
+    @media (max-width: 640px) {
+      body {
+        margin: 20px;
+        max-width: 100%;
+        padding: 15px;
+        border-radius: 0;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+      input, select, textarea, button {
+        font-size: 1rem;
+        padding: 12px;
+      }
+      #payment-instructions {
+        font-size: 0.9rem;
+      }
+      #success-msg {
+        font-size: 1.2rem;
+      }
+      .tick {
+        width: 50px;
+        height: 50px;
+        border-width: 3px;
+      }
+      .tick::after {
+        left: 15px;
+        top: 27px;
+        border-width: 3px;
+        width: 10px;
+        height: 20px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      button {
+        padding: 12px;
+        font-size: 0.95rem;
+      }
+      label {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Checkout</h1>
+
+  <form id="order-form">
+    <label for="name">Name:</label>
+    <input type="text" id="name" required />
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" required />
+
+    <label for="address">Delivery Address:</label>
+    <textarea id="address" rows="3" required></textarea>
+
+    <label for="payment-method">Payment Method:</label>
+    <select id="payment-method" required>
+      <option value="" disabled selected>Select payment method</option>
+      <option value="Cash on Delivery">Cash on Delivery</option>
+      <option value="Easypaisa">Easypaisa</option>
+      <option value="JazzCash">JazzCash</option>
+    </select>
+
+    <button type="submit">Place Order</button>
+  </form>
+
+  <!-- Payment instructions area -->
+  <div id="payment-instructions"></div>
+
+  <!-- Success message + tick -->
+  <div id="success-container">
+    <div class="tick"></div>
+    <div id="success-msg">Your order has been placed</div>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+  <script>
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAgCulSOvdbYZdLNUjBCxN_1rfttwQ_Rv4",
+      authDomain: "tech-store-1943d.firebaseapp.com",
+      projectId: "tech-store-1943d",
+      storageBucket: "tech-store-1943d.firebasestorage.app",
+      messagingSenderId: "275073206703",
+      appId: "1:275073206703:web:1550dd9737904256a5875a",
+      measurementId: "G-2VZGWDV3SH"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const form = document.getElementById('order-form');
+    const paymentSelect = document.getElementById('payment-method');
+    const paymentInstructions = document.getElementById('payment-instructions');
+    const successContainer = document.getElementById('success-container');
+
+    // Show payment instructions live when payment method changes
+    paymentSelect.addEventListener('change', () => {
+      const val = paymentSelect.value;
+      if (val === 'Easypaisa') {
+        paymentInstructions.innerHTML = `
+          <strong>Easypaisa Payment Instructions:</strong><br/>
+          Please send your payment screenshot to WhatsApp: <strong>+92 300 1234567</strong>
+        `;
+      } else if (val === 'JazzCash') {
+        paymentInstructions.innerHTML = `
+          <strong>JazzCash Payment Instructions:</strong><br/>
+          Please send your payment screenshot to WhatsApp: <strong>+92 300 1234567</strong>
+        `;
+      } else {
+        paymentInstructions.innerHTML = '';
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const address = document.getElementById('address').value.trim();
+      const paymentMethod = paymentSelect.value;
+
+      if (!name || !email || !address || !paymentMethod) {
+        alert('Please fill all fields!');
+        return;
+      }
+
+      const cart = JSON.parse(localStorage.getItem('cartData')) || [];
+      if (cart.length === 0) {
+        alert('Your cart is empty!');
+        return;
+      }
+
+      const cartTotal = localStorage.getItem('cartTotal') || '0';
+
+      const order = {
+        name,
+        email,
+        address,
+        paymentMethod,
+        cartItems: cart,
+        totalAmount: cartTotal,
+        orderDate: new Date().toISOString()
+      };
+
+      try {
+        await db.collection('orders').add(order);
+
+        // Clear form and cart
+        form.reset();
+        localStorage.removeItem('cartData');
+        localStorage.removeItem('cartTotal');
+        paymentInstructions.innerHTML = '';
+
+        // Hide form, show success with animation
+        form.style.display = 'none';
+        successContainer.style.display = 'block';
+
+      } catch (error) {
+        alert('Error placing your order, please try again.');
+        console.error('Firestore error:', error);
+      }
+    });
+  </script>
+
+</body>
+</html>
