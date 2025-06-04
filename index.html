@@ -1,138 +1,351 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mobile Repair Shop</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Italian Mobile Shop</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
-      background-color: #111;
-      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0d1117;
+      color: #f0f0f0;
+      padding-bottom: 1px; /* space for sticky checkout */
     }
-    header {
-      background: #222;
-      color: white;
+    header, nav, footer {
+      background-color: #1f2937;
+      padding: 15px 20px;
       text-align: center;
-      padding: 20px;
-      font-size: 24px;
     }
     nav {
       display: flex;
+      flex-wrap: wrap;
       justify-content: center;
-      background: #333;
-      padding: 15px;
+      gap: 15px;
     }
     nav a {
       color: white;
       text-decoration: none;
-      padding: 15px 25px;
-      font-size: 18px;
-      transition: 0.3s;
+      font-weight: bold;
     }
     nav a:hover {
-      background: #444;
+      color: #10b981;
     }
     .container {
-      width: 80%;
-      margin: auto;
-      overflow: hidden;
-      padding: 30px;
-      background: #222;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
-      margin-top: 30px;
-      border-radius: 10px;
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 15px;
     }
-    .poster {
-      width: 300px;
-      height: auto;
-      border-radius: 10px;
-      margin: 20px auto;
-      display: block;
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
     }
-
-    .services {
-      display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
-      margin-top: 30px;
-    }
-    .service-box {
-      background: #333;
-      padding: 20px;
-      width: 30%;
-      text-align: center;
-      border-radius: 10px;
-      transition: transform 0.3s, background 0.3s;
-      margin-bottom: 20px;
-    }
-    .service-box:hover {
-      transform: scale(1.05);
-      background: #444;
-    }
-    footer {
-      text-align: center;
+    .product-box {
+      background: #1f2937;
       padding: 15px;
-      background: #222;
-      color: white;
-      margin-top: 30px;
+      border-radius: 10px;
+      text-align: center;
+      transition: all 0.3s ease;
     }
-    button {
-      display: block;
-      margin: 20px auto;
-      padding: 15px 25px;
-      background: #28a745;
-      color: white;
-      font-size: 18px;
+    .product-box:hover {
+      background: #374151;
+      transform: translateY(-5px);
+    }
+    .product-box img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    .price {
+      color: #10b981;
+      font-weight: bold;
+    }
+    .btn {
+      background-color: #3b82f6;
       border: none;
+      padding: 10px 15px;
+      color: white;
       border-radius: 5px;
       cursor: pointer;
-      transition: background 0.3s;
     }
-    button:hover {
-      background: #218838;
+    .btn:hover {
+      background-color: #2563eb;
+    }
+    .cart-summary {
+      background: #1f2937;
+      padding: 20px;
+      margin-top: 40px;
+      border-radius: 10px;
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .remove-btn {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .remove-btn:hover {
+      background: #dc2626;
+    }
+    .cart-icon {
+      position: relative;
+      cursor: pointer;
+    }
+    .cart-count {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #10b981;
+      color: white;
+      border-radius: 50%;
+      font-size: 12px;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    .sticky-checkout {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #1f2937;
+      padding: 10px 20px;
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      border-top: 2px solid #10b981;
+    }
+    .sticky-checkout button {
+      padding: 10px 20px;
+      background: #10b981;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .sidebar-toggle {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1001;
+      background: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px;
+      cursor: pointer;
+    }
+    .sidebar {
+      width: 200px;
+      background: #111;
+      color: white;
+      position: fixed;
+      height: 100vh;
+      top: 0;
+      left: -200px;
+      transition: left 0.3s ease;
+      padding-top: 60px;
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      z-index: 1000;
+    }
+    .sidebar.show {
+      left: 0;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+    }
+    .sidebar a:hover {
+      color: #00bcd4;
+    }
+    @media(max-width: 600px) {
+      nav {
+        flex-direction: column;
+        align-items: center;
+      }
+      .product-box img {
+        height: 150px;
+      }
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Italian Mobile Shop</h1>
-    <p>Fast & Reliable Mobile Repair Services</p>
-  </header>
-  <nav>
-    <a href="#">Home</a>
-    <a href="sevices.html">Services</a>
-    <a href="contact.html">Contact</a>
-  </nav>
-  <div class="container">
-    <img src="Red and White Modern Truck Rental Services Instagram Post.png
-" alt="Portrait Poster" class="poster">
-    <h2>Our Services</h2>
-    <div class="services">
-      <div class="service-box">
-        <h3>Screen Repair</h3>
-        <p>We fix broken screens quickly and affordably.</p>
-      </div>
-      <div class="service-box">
-        <h3>Battery Replacement</h3>
-        <p>Replace old batteries for better performance.</p> 
-      </div>
-      <div class="service-box">
-        <h3>Software Issues</h3>
-        <p>Fix software problems and improve your device.</p>
-      </div>
-    </div>
-    <button onclick="showAlert()">Click for Discount</button>
+
+<button class="sidebar-toggle" onclick="toggleSidebar()">☰ Menu</button>
+<div class="sidebar" id="sidebar">
+  <a href="index.html">Home</a>
+  <a href="sevices.html">Services</a>
+  <a href="contact.html">Contact Us</a>
+</div>
+
+<header>
+  <h1>Italian Mobile Shop</h1>
+  <p>Fast & Reliable Mobile Repair Services</p>
+</header>
+
+<nav>
+  <a href="index.html">Hot Products</a>
+  <a href="smart-watches.html">Smart Watches</a>
+  <a href="phones.html">Phones</a>
+  <a href="mics.html">Mics</a>
+  <a href="youtube-studio.html">YouTube Studio</a>
+  <div class="cart-icon" onclick="scrollToCart()">
+    <img src="https://cdn-icons-png.flaticon.com/512/1170/1170678.png" width="30" alt="Cart" />
+    <div class="cart-count" id="cart-count">0</div>
   </div>
-  <footer>
-    <p>&copy; 2025 Mobile Repair Shop. All Rights Reserved.</p>
-  </footer>
-  <script>
-    function showAlert() {
-      alert("Get 10% off on your first repair!");
+</nav>
+
+<div class="container">
+  <h2>🔥 Hot Products</h2>
+  <div class="products" id="products-list">
+    <div class="product-box">
+      <img src="micpic2.jpg" alt="ORIGINAL BM800 Condenser Microphone KIT" />
+      <h3>ORIGINAL BM800 Condenser Microphone KIT</h3>
+      <p class="price">Rs. 1000</p>
+      <button class="btn" onclick="addToCart('ORIGINAL BM800 Condenser Microphone KIT', 1000)">Add to Cart</button>
+    </div>
+    <div class="product-box">
+      <img src="7+.jpg" alt="Iphone 7 Plus" />
+      <h3>Iphone 7 Plus</h3>
+      <p class="price">Rs. 1100</p>
+      <button class="btn" onclick="addToCart('Iphone 7 Plus', 1100)">Add to Cart</button>
+    </div>
+    <div class="product-box">
+      <img src="airpods.jpg" alt="Bluetooth Earbuds" />
+      <h3>Bluetooth Earbuds</h3>
+      <p class="price">Rs. 2300</p>
+      <button class="btn" onclick="addToCart('Bluetooth Earbuds', 2300)">Add to Cart</button>
+    </div>
+    <div class="product-box">
+      <img src="5in1watch.jpg" alt="5in1 Ultra Smart Watch" />
+      <h3>5in1 Ultra Smart Watch</h3>
+      <p class="price">Rs. 1500</p>
+      <button class="btn" onclick="addToCart('5in1 Ultra Smart Watch', 1500)">Add to Cart</button>
+    </div>
+    <div class="product-box">
+      <img src="powerbank.jpg" alt="Power Bank" />
+      <h3>Power Bank</h3>
+      <p class="price">Rs. 1200</p>
+      <button class="btn" onclick="addToCart('Power Bank', 1200)">Add to Cart</button>
+    </div>
+    <div class="product-box">
+      <img src="cooling fan.jpg" alt="CoolPad for Phones" />
+      <h3>CoolPad for Phones</h3>
+      <p class="price">Rs. 800</p>
+      <button class="btn" onclick="addToCart('CoolPad for Phones', 800)">Add to Cart</button>
+    </div>
+  </div>
+
+  <div class="cart-summary" id="cart" style="display:none;">
+    <h2>Cart Summary</h2>
+    <div id="cart-items"></div>
+    <p><strong>Total:</strong> Rs. <span id="cart-total">0</span></p>
+  </div>
+</div>
+
+<div class="sticky-checkout" id="checkout-bar">
+  <span>Total: Rs. <span id="sticky-total">0</span></span>
+  <button onclick="goToCheckout()">Checkout</button>
+</div>
+
+<footer>
+  <p>&copy; 2025 Italian Mobile Shop. All Rights Reserved.</p>
+</footer>
+
+<script>
+  let cart = [];
+  let total = 0;
+
+  const cartItemsDiv = document.getElementById('cart-items');
+  const cartTotalSpan = document.getElementById('cart-total');
+  const cartCountDiv = document.getElementById('cart-count');
+  const cartSummaryDiv = document.getElementById('cart');
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('show');
+  }
+
+  function addToCart(name, price) {
+    cart.push({ name, price });
+    total += price;
+    updateCart();
+  }
+
+  function removeItem(index) {
+    if (confirm('Are you sure you want to remove this item?')) {
+      total -= cart[index].price;
+      cart.splice(index, 1);
+      updateCart();
     }
-  </script>
+  }
+
+  function updateCart() {
+    cartItemsDiv.innerHTML = '';
+    cart.forEach((item, index) => {
+      const div = document.createElement('div');
+      div.className = 'cart-item';
+      div.innerHTML = `
+        <span>${item.name}</span>
+        <span>Rs. ${item.price} <button class="remove-btn" onclick="removeItem(${index})">x</button></span>
+      `;
+      cartItemsDiv.appendChild(div);
+    });
+    cartTotalSpan.textContent = total;
+    cartCountDiv.textContent = cart.length;
+
+    // Show cart summary if items in cart
+    cartSummaryDiv.style.display = cart.length > 0 ? 'block' : 'none';
+
+    // Show/hide sticky checkout bar
+    const checkoutBar = document.getElementById('checkout-bar');
+    if (cart.length > 0) {
+      checkoutBar.style.display = 'flex';
+      document.getElementById('sticky-total').textContent = total;
+    } else {
+      checkoutBar.style.display = 'none';
+    }
+  }
+
+  function scrollToCart() {
+    if (cart.length > 0) {
+      cartSummaryDiv.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      alert('Your cart is empty.');
+    }
+  }
+
+function goToCheckout() {
+    if(cart.length === 0) {
+      alert("Your cart is empty.");
+      return;
+    }
+    localStorage.setItem('cartData', JSON.stringify(cart));
+    localStorage.setItem('cartTotal', total);
+    window.location.href = 'checkout.html';
+  }
+
+  // Initialize
+  showProducts();
+  updateCart();
+</script>
+
 </body>
 </html>
