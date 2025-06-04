@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mobile Repair Shop</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #111;
+      color: white;
+    }
+    header {
+      background: #222;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      font-size: 24px;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      background: #333;
+      padding: 15px;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      padding: 15px 25px;
+      font-size: 18px;
+      transition: 0.3s;
+    }
+    nav a:hover {
+      background: #444;
+    }
+    .container {
+      width: 80%;
+      margin: auto;
+      overflow: hidden;
+      padding: 30px;
+      background: #222;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+      margin-top: 30px;
+      border-radius: 10px;
+    }
+    .poster {
+      width: 300px;
+      height: auto;
+      border-radius: 10px;
+      margin: 20px auto;
+      display: block;
+    }
+
+    .services {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+    .service-box {
+      background: #333;
+      padding: 20px;
+      width: 30%;
+      text-align: center;
+      border-radius: 10px;
+      transition: transform 0.3s, background 0.3s;
+      margin-bottom: 20px;
+    }
+    .service-box:hover {
+      transform: scale(1.05);
+      background: #444;
+    }
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: #222;
+      color: white;
+      margin-top: 30px;
+    }
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 15px 25px;
+      background: #28a745;
+      color: white;
+      font-size: 18px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #218838;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Italian Mobile Shop</h1>
+    <p>Fast & Reliable Mobile Repair Services</p>
+  </header>
+  <nav>
+    <a href="#">Home</a>
+    <a href="sevices.html">Services</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <div class="container">
+    <img src="poster.png" alt="Portrait Poster" class="poster">
+    <h2>Our Services</h2>
+    <div class="services">
+      <div class="service-box">
+        <h3>Screen Repair</h3>
+        <p>We fix broken screens quickly and affordably.</p>
+      </div>
+      <div class="service-box">
+        <h3>Battery Replacement</h3>
+        <p>Replace old batteries for better performance.</p> 
+      </div>
+      <div class="service-box">
+        <h3>Software Issues</h3>
+        <p>Fix software problems and improve your device.</p>
+      </div>
+    </div>
+    <button onclick="showAlert()">Click for Discount</button>
+  </div>
+  <footer>
+    <p>&copy; 2025 Mobile Repair Shop. All Rights Reserved.</p>
+  </footer>
+  <script>
+    function showAlert() {
+      alert("Get 10% off on your first repair!");
+    }
+  </script>
+</body>
+</html>
